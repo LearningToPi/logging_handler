@@ -1,0 +1,27 @@
+[project]
+name = "logging_helper"
+version = "1.0.0"
+description = "Python Library to quickly create logging handlers"
+authors = [{name = "Thomas Dunteman", email= "git@learningtopi.com"}]
+keywords = ["logging", "syslog"]
+readme = "README.md"
+requires-python =">=3.6"
+classifiers = [
+    "Topic :: System :: Logging",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3"
+]
+dependencies = []
+
+[project.urls]
+"Homepage" = "https://www.learningtopi.com"
+"Bug Tracker" = "https://github.com/LearningToPi/logging_helper/issues"
+"Source Code" = "https://github.com/LearningToPi/logging_helper"
+
+[tools.setuptools.dynamic]
+version = {attr = "src.logging_helper.__VERSION__"}
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
