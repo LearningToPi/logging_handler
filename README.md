@@ -34,8 +34,8 @@ In the examples above, you can create multiple loggers with different names.  If
 ## Parameters
 | Parameter | Default | Description |
 | --------- | ------- | ----------- |
+| console_level | 'INFO' (str) | Set the logging level for the console
 | console | True (bool) | Enable / Disable logging to the console
-| console_level | 'WARNING' (str) | Set the logging level for the console
 | log_file | '' (str) | Set the file to log to (blank means none)
 | file_level | 'WARNING' (str) | Set the logging level for the file
 | file_mode | 'a' (str) | Feeds into the file mode 'a' for append, 'w' for overwrite
@@ -45,3 +45,11 @@ In the examples above, you can create multiple loggers with different names.  If
 | log_file_vars | [] (list) | list of variables that can be used to create the log file names
 | log_file_retention_days | 0 (int) | Specify the max number of days to retain the log files
 | propagate | False (bool) | If set to true, the named loggers will also be processed by the root logger.  Generally leave false
+
+## Release Notes
+
+v1.0.2  
+        - Moved console level to the 1st parameter.  Make it quicker and easier to create a console logger
+        - Chaned default console level to INFO from WARNING.  This is what I typically end up using anyway
+        - Updated the home page to our new logging_handler page:  https://www.learningtopi.com/python-modules-applications/python_logging_handler/
+        - Allow passing static values DEBUG, INFO, WARNING, ERROR and CRITICAL from the logging module (or you may import from this library)
