@@ -1,6 +1,6 @@
 [project]
 name = "logging_handler"
-version = "1.0.1"
+version = "1.0.2"
 description = "Python Library to quickly create logging handlers"
 authors = [{name = "Thomas Dunteman", email= "git@learningtopi.com"}]
 keywords = ["logging", "syslog"]
@@ -15,7 +15,7 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-"Homepage" = "https://www.learningtopi.com"
+"Homepage" = "https://www.learningtopi.com/python-modules-applications/python_logging_handler/"
 "Bug Tracker" = "https://github.com/LearningToPi/logging_handler/issues"
 "Source Code" = "https://github.com/LearningToPi/logging_handler"
 
