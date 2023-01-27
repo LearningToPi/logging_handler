@@ -41,7 +41,7 @@ def create_logger(console_level='WARNING', log_file='', file_level='WARNING', na
     # Console
     if console:
         console_handler = logging.StreamHandler()
-        console_handler.setLevel(_log_level_name.get(console_level.upper() if not isinstance(console_level, int) else console_level, logging.INFO))
+        console_handler.setLevel(_log_level_name.get(console_level.upper(), logging.INFO) if not isinstance(console_level, int) else console_level)
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
 
@@ -49,7 +49,7 @@ def create_logger(console_level='WARNING', log_file='', file_level='WARNING', na
     if syslog:
         syslog_formatter = logging.Formatter(syslog_script_name + '[%(process)d]: %(levelname)s: %(message)s')
         syslog_handler = logging.handlers.SysLogHandler(address='/dev/log')
-        syslog_handler.setLevel(_log_level_name.get(file_level.upper() if not isinstance(file_level, int) else file_level, logging.WARNING))
+        syslog_handler.setLevel(_log_level_name.get(file_level.upper(), logging.WARNING) if not isinstance(file_level, int) else file_level)
         syslog_handler.setFormatter(syslog_formatter)
         logger.addHandler(syslog_handler)
 
@@ -60,7 +60,7 @@ def create_logger(console_level='WARNING', log_file='', file_level='WARNING', na
             if type(var) == dict and 'var' in var and 'set' in var and var['var'] == "{date}":
                 log_file = log_file.replace(var['var'], datetime.now().strftime(var['set']))
         file_handler = logging.FileHandler(log_file, mode=file_mode, encoding='utf-8', delay=False)
-        file_handler.setLevel(_log_level_name.get(file_level.upper() if not isinstance(file_level, int) else file_level, logging.WARNING))
+        file_handler.setLevel(_log_level_name.get(file_level.upper(), logging.WARNING) if not isinstance(file_level, int) else file_level)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
 
