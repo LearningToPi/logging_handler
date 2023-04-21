@@ -49,7 +49,7 @@ _log_level_name = {
 _supported_log_levels = [DEBUG, INFO, WARNING, ERROR, CRITICAL]
 
 
-def _create_logger(console_level=WARNING, log_file='', file_level=WARNING, name='', file_mode='a', console=True,
+def create_logger(console_level=WARNING, log_file='', file_level=WARNING, name='', file_mode='a', console=True,
                   syslog=False, syslog_script_name='', log_file_vars=[], log_file_retention_days=0, propagate=False):
     """ Creates a logger and returns the handle.
         Log file vars should be sent as a dict -> {"var": "{date}", "set": "%Y-%m-%d-%Y-%M"}
