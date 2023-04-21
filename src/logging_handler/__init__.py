@@ -59,6 +59,7 @@ def create_logger(console_level=WARNING, log_file='', file_level=WARNING, name='
     
      """
     logger = logging.getLogger(name)
+    logger.handlers.clear() # Clear all existing handlers before creating new ones!
     logger.setLevel(logging.DEBUG)
     logger.propagate = propagate
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
