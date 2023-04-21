@@ -1,6 +1,6 @@
 [project]
 name = "logging_handler"
-version = "1.0.3"
+version = "1.0.4"
 description = "Python Library to quickly create logging handlers"
 authors = [{name = "Thomas Dunteman", email= "git@learningtopi.com"}]
 keywords = ["logging", "syslog"]
