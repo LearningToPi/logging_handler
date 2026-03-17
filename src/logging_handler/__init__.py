@@ -117,6 +117,7 @@ def update_console_level(logger, level):
     for handler in logger.handlers:
         if isinstance(handler, logging.StreamHandler):
             handler.setLevel(level if isinstance(level, int) else _log_level_number.get(str(level).upper(), DEFAULT_LEVEL))
+            logger.info('Console log level updated to %s', level)
 
 
 def update_file_level(logger, level):
@@ -124,6 +125,7 @@ def update_file_level(logger, level):
     for handler in logger.handlers:
         if isinstance(handler, logging.handlers.SysLogHandler):
             handler.setLevel(level if isinstance(level, int) else _log_level_number.get(str(level).upper(), DEFAULT_LEVEL))
+            logger.info('File log level updated to %s', level)
 
 
 class CustomLogger(logging.Logger):
@@ -174,12 +176,14 @@ class CustomLogger(logging.Logger):
         for handler in self.handlers:
             if isinstance(handler, logging.StreamHandler):
                 handler.setLevel(level if isinstance(level, int) else _log_level_number.get(str(level).upper(), DEFAULT_LEVEL))
+                self.info('Console log level updated to %s', level)
 
     def file_level(self, level):
         """ Updates the file log level for this logger. """
         for handler in self.handlers:
             if isinstance(handler, logging.handlers.SysLogHandler):
                 handler.setLevel(level if isinstance(level, int) else _log_level_number.get(str(level).upper(), DEFAULT_LEVEL))
+                self.info('File log level updated to %s', level)
 
     def _logfile_cleanup_thread(self):
         """ Thread function to clean up old log files based on retention settings. """
