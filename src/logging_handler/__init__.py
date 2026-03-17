@@ -207,7 +207,7 @@ class CustomLogger(logging.Logger):
                                 if mtime < datetime.now() - timedelta(days=self.log_file_retention_days):
                                     self.info('Deleting old log file %s.  Modified time %s, retention set to %i days.', old_log_file, mtime, self.log_file_retention_days)
                                     os.remove(old_log_file)
-            except Exception as e:
+            except Exception as e: # pylint: disable=broad-except
                 self.error('Error in log file cleanup thread, %s: %s', e.__class__.__name__, str(e))
             finally:
                 sleep(300)  # Sleep for 5 minutes before checking again
