@@ -1,6 +1,6 @@
 [project]
 name = "logging_handler"
-version = "1.0.7"
+version = "1.0.8"
 description = "Python Library to quickly create logging handlers"
 authors = [{name = "Thomas Dunteman", email= "git@learningtopi.com"}]
 keywords = ["logging", "syslog"]
@@ -10,8 +10,7 @@ classifiers = [
     "Topic :: System :: Logging",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3"
-]
+    "Programming Language :: Python :: 3"]
 dependencies = []
 
 [project.urls]

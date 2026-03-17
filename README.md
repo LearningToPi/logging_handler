@@ -48,8 +48,16 @@ In the examples above, you can create multiple loggers with different names.  If
 
 ## Release Notes
 
-v1.0.2  
-        - Moved console level to the 1st parameter.  Make it quicker and easier to create a console logger
-        - Chaned default console level to INFO from WARNING.  This is what I typically end up using anyway
-        - Updated the home page to our new logging_handler page:  https://www.learningtopi.com/python-modules-applications/python_logging_handler/
-        - Allow passing static values DEBUG, INFO, WARNING, ERROR and CRITICAL from the logging module (or you may import from this library)
+Release notes can now be found in the release notes folder.
+
+## Changing Logging Level
+
+As of v1.0.8, two functions, "update_console_level" and "update_file_level" have been added.  To change the logging level on the fly:
+
+    >>> from logging_helper import create_logger, update_console_level
+    >>> logger = create_logger(console=True)
+    >>> update_console_level(logger, 'info')
+
+## CustomLogger class
+
+As of v1.0.8, a CustomLogger class was added.  This performs the same function as using create_logger, however rather than requiring a separate function to update logging levels, the class includes a "console_level" and "file_level" function that can be used.  The class also utilizes threading to enable old logfile cleanup.
