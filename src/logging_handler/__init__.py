@@ -28,6 +28,8 @@ from glob import glob
 from datetime import datetime, timedelta
 import pathlib
 import os
+import threading
+from time import sleep
 
 __VERSION__ = (1, 0, 7)
 
@@ -66,7 +68,7 @@ def create_logger(console_level=WARNING, log_file='', file_level=WARNING, name='
     # Console
     if console:
         console_handler = logging.StreamHandler()
-        console_handler.setLevel(console_level if isinstance(console_level, int) else _log_level_number.get(str(console_level).upper(), DEFAULT_LEVEL))
+        console_handler.setLevel(console_level if isinstance(console_level, int) else _log_level_number.get(str(console_level).upper(), DEFAULT_LEVEL))  
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
 
@@ -108,3 +110,100 @@ def create_logger(console_level=WARNING, log_file='', file_level=WARNING, name='
 
     # return the logger
     return logger
+
+
+def update_console_level(logger, level):
+    """ Updates the console log level for the provided logger. """
+    for handler in logger.handlers:
+        if isinstance(handler, logging.StreamHandler):
+            handler.setLevel(level if isinstance(level, int) else _log_level_number.get(str(level).upper(), DEFAULT_LEVEL))
+
+
+def update_file_level(logger, level):
+    """ Updates the file log level for the provided logger. """
+    for handler in logger.handlers:
+        if isinstance(handler, logging.handlers.SysLogHandler):
+            handler.setLevel(level if isinstance(level, int) else _log_level_number.get(str(level).upper(), DEFAULT_LEVEL))
+
+
+class CustomLogger(logging.Logger):
+    """ Custom logger class that extends the standard logging.Logger. """
+    def __init__(self, name, console_level:str=WARNING, log_file:str|None=None, file_level:str|None=None, file_mode:str='a', console:bool=True,
+                  syslog:bool=False, syslog_script_name:str='', log_file_vars:dict|None=None, log_file_retention_days:int=0, propagate:bool=False):
+        super().__init__(name, console_level if isinstance(console_level, int) else _log_level_number.get(str(console_level).upper(), DEFAULT_LEVEL))
+        self.handlers.clear() # Clear all existing handlers before creating new ones!
+        self.setLevel(logging.DEBUG)
+        self.propagate = propagate
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        self.log_file_vars, self.log_file_retention_days = log_file_vars, log_file_retention_days
+
+        # Console
+        if console:
+            console_handler = logging.StreamHandler()
+            console_handler.setLevel(console_level if isinstance(console_level, int) else _log_level_number.get(str(console_level).upper(), DEFAULT_LEVEL))
+            console_handler.setFormatter(formatter)
+            self.addHandler(console_handler)
+
+        # syslog
+        if syslog:
+            syslog_formatter = logging.Formatter(syslog_script_name + '[%(process)d]: %(levelname)s: %(message)s')
+            syslog_handler = logging.handlers.SysLogHandler(address='/dev/log')
+            syslog_handler.setLevel(file_level if isinstance(file_level, int) else _log_level_number.get(str(file_level).upper(), DEFAULT_LEVEL))
+            syslog_handler.setFormatter(syslog_formatter)
+            self.addHandler(syslog_handler)
+
+        # file
+        if log_file not in (None, ''):
+            # replace variables in the log file name
+            if log_file_vars is not None:
+                for var in log_file_vars:
+                    if isinstance(var, dict) and 'var' in var and 'set' in var and var['var'] == "{date}":
+                        log_file = log_file.replace(var['var'], datetime.now().strftime(var['set']))
+            file_handler = logging.FileHandler(log_file, mode=file_mode, encoding='utf-8', delay=False)
+            file_handler.setLevel(file_level if isinstance(file_level, int) else _log_level_number.get(str(file_level).upper(), DEFAULT_LEVEL))
+            file_handler.setFormatter(formatter)
+            self.addHandler(file_handler)
+
+            # start background thread for log file cleanup if retention is set
+            if log_file_retention_days > 0:
+                self._cleanup_thread = threading.Thread(target=self._logfile_cleanup_thread, daemon=True)
+                self._cleanup_thread.start()
+
+    def console_level(self, level):
+        """ Updates the console log level for this logger. """
+        for handler in self.handlers:
+            if isinstance(handler, logging.StreamHandler):
+                handler.setLevel(level if isinstance(level, int) else _log_level_number.get(str(level).upper(), DEFAULT_LEVEL))
+
+    def file_level(self, level):
+        """ Updates the file log level for this logger. """
+        for handler in self.handlers:
+            if isinstance(handler, logging.handlers.SysLogHandler):
+                handler.setLevel(level if isinstance(level, int) else _log_level_number.get(str(level).upper(), DEFAULT_LEVEL))
+
+    def _logfile_cleanup_thread(self):
+        """ Thread function to clean up old log files based on retention settings. """
+        while True:
+            try:
+                for handler in self.handlers:
+                    if isinstance(handler, logging.FileHandler):
+                        log_file = handler.baseFilename
+                        # manage retention
+                        if hasattr(self, 'log_file_retention_days') and self.log_file_retention_days > 0:
+                            # replace variables with a *
+                            log_file_search_name = log_file
+                            if hasattr(self, 'log_file_vars') and self.log_file_vars is not None:
+                                for var in self.log_file_vars:
+                                    log_file_search_name.replace(var['var'], '*')
+                            old_log_files = glob(log_file_search_name)
+                            for old_log_file in old_log_files:
+                                # check the age and delete if needed
+                                fname = pathlib.Path(old_log_file)
+                                mtime = datetime.fromtimestamp(fname.stat().st_mtime)
+                                if mtime < datetime.now() - timedelta(days=self.log_file_retention_days):
+                                    self.info('Deleting old log file %s.  Modified time %s, retention set to %i days.', old_log_file, mtime, self.log_file_retention_days)
+                                    os.remove(old_log_file)
+            except Exception as e:
+                self.error('Error in log file cleanup thread, %s: %s', e.__class__.__name__, str(e))
+            finally:
+                sleep(300)  # Sleep for 5 minutes before checking again
