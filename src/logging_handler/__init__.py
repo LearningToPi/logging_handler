@@ -31,7 +31,7 @@ import os
 import threading
 from time import sleep
 
-__VERSION__ = (1, 0, 7)
+VERSION = (1, 0, 8)
 
 DEFAULT_LEVEL = logging.WARNING
 
@@ -68,7 +68,7 @@ def create_logger(console_level=WARNING, log_file='', file_level=WARNING, name='
     # Console
     if console:
         console_handler = logging.StreamHandler()
-        console_handler.setLevel(console_level if isinstance(console_level, int) else _log_level_number.get(str(console_level).upper(), DEFAULT_LEVEL))  
+        console_handler.setLevel(console_level if isinstance(console_level, int) else _log_level_number.get(str(console_level).upper(), DEFAULT_LEVEL))
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
 
