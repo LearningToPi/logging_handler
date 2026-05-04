@@ -31,7 +31,7 @@ import os
 import threading
 from time import sleep
 
-VERSION = (1, 0, 8)
+VERSION = (1, 0, 10)    # updated 2026-05-03 22:22:02.322482 from : (1, 0, 9)
 
 DEFAULT_LEVEL = logging.WARNING
 
@@ -49,6 +49,16 @@ _log_level_number = {
     "CRITICAL": logging.CRITICAL
 }
 
+log_level_int = (
+    "CRITICAL",
+    "CRITICAL",
+    "CRITICAL",
+    "ERROR",
+    "WARNING",
+    "WARNING",
+    "INFO",
+    "DEBUG"
+)
 
 def create_logger(console_level=WARNING, log_file='', file_level=WARNING, name='', file_mode='a', console=True,
                   syslog=False, syslog_script_name='', log_file_vars=None, log_file_retention_days=0, propagate=False):
